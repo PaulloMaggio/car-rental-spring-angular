@@ -1,12 +1,14 @@
 package com.paulo_motors.demo.controllers;
 
-import com.paulo_motors.demo.entitiesDTO.ManagerDTO;
 import com.paulo_motors.demo.entities.Manager;
+import com.paulo_motors.demo.entitiesDTO.ManagerDTO;
 import com.paulo_motors.demo.services.ManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,7 +22,9 @@ public class ManagerController {
     @PostMapping
     public ResponseEntity<Manager> create(@RequestBody ManagerDTO dto) {
         Manager manager = service.create(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(manager);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+                .buildAndExpand(manager.getId()).toUri();
+        return ResponseEntity.created(uri).body(manager);
     }
 
     @GetMapping
