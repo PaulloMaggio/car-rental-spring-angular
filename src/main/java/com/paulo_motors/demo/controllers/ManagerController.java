@@ -3,6 +3,7 @@ package com.paulo_motors.demo.controllers;
 import com.paulo_motors.demo.entities.Manager;
 import com.paulo_motors.demo.entitiesDTO.ManagerDTO;
 import com.paulo_motors.demo.services.ManagerService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class ManagerController {
     private ManagerService service;
 
     @PostMapping
-    public ResponseEntity<Manager> create(@RequestBody ManagerDTO dto) {
+    public ResponseEntity<Manager> create(@Valid @RequestBody ManagerDTO dto) {
         Manager manager = service.create(dto);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(manager.getId()).toUri();
@@ -38,7 +39,7 @@ public class ManagerController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Manager> update(@PathVariable UUID id, @RequestBody ManagerDTO dto) {
+    public ResponseEntity<Manager> update(@PathVariable UUID id, @Valid @RequestBody ManagerDTO dto) {
         return ResponseEntity.ok().body(service.update(id, dto));
     }
 
