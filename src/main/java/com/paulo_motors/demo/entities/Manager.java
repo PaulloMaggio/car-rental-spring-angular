@@ -1,24 +1,26 @@
 package com.paulo_motors.demo.entities;
 
 import jakarta.persistence.*;
-
-
 import java.io.Serializable;
 import java.util.UUID;
 
 @Entity
-@Table(name = "manager-tb")
+@Table(name = "tb_managers")
 public class Manager implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
     @Column(nullable = false)
     private String name;
-    @Column(nullable = false)
+
+    @Column(nullable = false, unique = true)
     private String login;
-    @Column(nullable = false)
+
+    @Column(nullable = false, unique = true)
     private String email;
+
     @Column(nullable = false)
     private String password;
 
@@ -79,7 +81,6 @@ public class Manager implements Serializable {
                 ", name='" + name + '\'' +
                 ", login='" + login + '\'' +
                 ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
                 '}';
     }
 }
