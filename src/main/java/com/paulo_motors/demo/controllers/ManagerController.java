@@ -1,51 +1,44 @@
 package com.paulo_motors.demo.controllers;
 
-import com.paulo_motors.demo.entities.Manager;
-import com.paulo_motors.demo.entitiesDTO.ManagerDTO;
-import com.paulo_motors.demo.services.ManagerService;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value = "/api/v1/managers")
+@RequestMapping("/api/v1/managers")
+@Tag(name = "Gerentes")
 public class ManagerController {
 
-    @Autowired
-    private ManagerService service;
-
-    @PostMapping
-    public ResponseEntity<Manager> create(@Valid @RequestBody ManagerDTO dto) {
-        Manager manager = service.create(dto);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(manager.getId()).toUri();
-        return ResponseEntity.created(uri).body(manager);
-    }
-
+    @Operation(summary = "Listar todos os gerentes")
     @GetMapping
-    public ResponseEntity<List<Manager>> findAll() {
-        return ResponseEntity.ok().body(service.findAll());
+    public ResponseEntity findAll() {
+        return ResponseEntity.ok().build();
     }
 
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<Manager> findById(@PathVariable UUID id) {
-        return ResponseEntity.ok().body(service.findById(id));
+    @Operation(summary = "Buscar gerente por ID")
+    @GetMapping("/{id}")
+    public ResponseEntity findById(@PathVariable UUID id) {
+        return ResponseEntity.ok().build();
     }
 
-    @PutMapping(value = "/{id}")
-    public ResponseEntity<Manager> update(@PathVariable UUID id, @Valid @RequestBody ManagerDTO dto) {
-        return ResponseEntity.ok().body(service.update(id, dto));
+    @Operation(summary = "Cadastrar novo gerente")
+    @PostMapping
+    public ResponseEntity save() {
+        return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> delete(@PathVariable UUID id) {
-        service.delete(id);
-        return ResponseEntity.noContent().build();
+    @Operation(summary = "Atualizar dados do gerente")
+    @PutMapping("/{id}")
+    public ResponseEntity update(@PathVariable UUID id) {
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "Remover gerente do sistema")
+    @DeleteMapping("/{id}")
+    public ResponseEntity delete(@PathVariable UUID id) {
+        return ResponseEntity.ok().build();
     }
 }

@@ -19,7 +19,7 @@ public class User implements UserDetails {
     private UUID id;
 
     @Column(nullable = false, unique = true)
-    private String login; // Geralmente o e-mail
+    private String login;
 
     @Column(nullable = false)
     private String password;
@@ -36,21 +36,17 @@ public class User implements UserDetails {
         this.role = role;
     }
 
-    // Métodos do UserDetails que o Spring Security exige
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if(this.role == UserRole.MANAGER) {
-            return List.of(new SimpleGrantedAuthority("ROLE_MANAGER"), new SimpleGrantedAuthority("ROLE_CLIENT"));
-        } else {
-            return List.of(new SimpleGrantedAuthority("ROLE_CLIENT"));
-        }
+        if(this.role == UserRole.MANAGER) return List.of(new SimpleGrantedAuthority("ROLE_MANAGER"), new SimpleGrantedAuthority("ROLE_CLIENT"));
+        else return List.of(new SimpleGrantedAuthority("ROLE_CLIENT"));
     }
 
     @Override
-    public String getUsername() { return login; }
+    public String getPassword() { return password; }
 
     @Override
-    public String getPassword() { return password; }
+    public String getUsername() { return login; }
 
     @Override
     public boolean isAccountNonExpired() { return true; }

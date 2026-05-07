@@ -1,50 +1,38 @@
 package com.paulo_motors.demo.controllers;
 
-import com.paulo_motors.demo.entities.Rental;
-import com.paulo_motors.demo.entitiesDTO.RentalDTO;
-import com.paulo_motors.demo.entitiesDTO.ReturnDTO;
-import com.paulo_motors.demo.services.RentalService;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value = "/api/v1/rentals")
+@RequestMapping("/api/v1/rentals")
+@Tag(name = "Aluguéis")
 public class RentalController {
 
-    @Autowired
-    private RentalService service;
-
-    @PostMapping
-    public ResponseEntity<Rental> create(@Valid @RequestBody RentalDTO dto) {
-        Rental rental = service.create(dto);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(rental.getId()).toUri();
-        return ResponseEntity.created(uri).body(rental);
-    }
-
-    @PutMapping(value = "/return")
-    public ResponseEntity<Rental> processReturn(@Valid @RequestBody ReturnDTO dto) {
-        Rental rental = service.processReturn(dto);
-        return ResponseEntity.ok().body(rental);
-    }
-
+    @Operation(summary = "Listar aluguéis")
     @GetMapping
-    public ResponseEntity<Page<Rental>> findAll(Pageable pageable) {
-        Page<Rental> list = service.findAll(pageable);
-        return ResponseEntity.ok().body(list);
+    public ResponseEntity findAll() {
+        return ResponseEntity.ok().build();
     }
 
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<Rental> findById(@PathVariable UUID id) {
-        Rental rental = service.findById(id);
-        return ResponseEntity.ok().body(rental);
+    @Operation(summary = "Buscar aluguel por ID")
+    @GetMapping("/{id}")
+    public ResponseEntity findById(@PathVariable UUID id) {
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "Registrar novo aluguel")
+    @PostMapping
+    public ResponseEntity save() {
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "Realizar devolução de veículo")
+    @PutMapping("/return")
+    public ResponseEntity returnCar() {
+        return ResponseEntity.ok().build();
     }
 }

@@ -1,51 +1,44 @@
 package com.paulo_motors.demo.controllers;
 
-import com.paulo_motors.demo.entities.Client;
-import com.paulo_motors.demo.entitiesDTO.ClientDTO;
-import com.paulo_motors.demo.services.ClientService;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value = "/api/v1/clients")
+@RequestMapping("/api/v1/clients")
+@Tag(name = "Clientes")
 public class ClientController {
 
-    @Autowired
-    private ClientService service;
-
-    @PostMapping
-    public ResponseEntity<Client> create(@Valid @RequestBody ClientDTO dto) {
-        Client client = service.create(dto);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(client.getId()).toUri();
-        return ResponseEntity.created(uri).body(client);
-    }
-
+    @Operation(summary = "Listar todos os clientes")
     @GetMapping
-    public ResponseEntity<List<Client>> findAll() {
-        return ResponseEntity.ok().body(service.findAll());
+    public ResponseEntity findAll() {
+        return ResponseEntity.ok().build();
     }
 
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<Client> findById(@PathVariable UUID id) {
-        return ResponseEntity.ok().body(service.findById(id));
+    @Operation(summary = "Buscar cliente por ID")
+    @GetMapping("/{id}")
+    public ResponseEntity findById(@PathVariable UUID id) {
+        return ResponseEntity.ok().build();
     }
 
-    @PutMapping(value = "/{id}")
-    public ResponseEntity<Client> update(@PathVariable UUID id, @Valid @RequestBody ClientDTO dto) {
-        return ResponseEntity.ok().body(service.update(id, dto));
+    @Operation(summary = "Cadastrar novo cliente")
+    @PostMapping
+    public ResponseEntity save() {
+        return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> delete(@PathVariable UUID id) {
-        service.delete(id);
-        return ResponseEntity.noContent().build();
+    @Operation(summary = "Atualizar dados do cliente")
+    @PutMapping("/{id}")
+    public ResponseEntity update(@PathVariable UUID id) {
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "Excluir cadastro de cliente")
+    @DeleteMapping("/{id}")
+    public ResponseEntity delete(@PathVariable UUID id) {
+        return ResponseEntity.ok().build();
     }
 }
