@@ -4,6 +4,7 @@ import com.paulo_motors.demo.entities.Car;
 import com.paulo_motors.demo.entities.Client;
 import com.paulo_motors.demo.entities.Rental;
 import com.paulo_motors.demo.entitiesDTO.RentalDTO;
+import com.paulo_motors.demo.entitiesDTO.ReturnDTO;
 import com.paulo_motors.demo.entities.enums.CarStatus;
 import com.paulo_motors.demo.entities.enums.MotorType;
 import com.paulo_motors.demo.repositories.CarRepository;
@@ -45,13 +46,17 @@ class RentalServiceTest {
     private RentalDTO rentalDTO;
     private Client client;
     private Car car;
+    private Rental rental;
     private UUID clientId;
     private UUID carId;
+    private UUID rentalId;
 
     @BeforeEach
     void setUp() {
         clientId = UUID.randomUUID();
         carId = UUID.randomUUID();
+        rentalId = UUID.randomUUID();
+
         client = new Client(clientId, "Paulo", "paulo@test.com", "12345678901", "1699999999");
         car = new Car(carId, "Civic", "Honda", "Black", MotorType.MOTOR_2_0, CarStatus.AVAILABLE, new BigDecimal("200.00"));
 
@@ -61,19 +66,20 @@ class RentalServiceTest {
                 clientId,
                 carId
         );
+
+        rental = new Rental(rentalId, rentalDTO.startDate(), rentalDTO.endDate(), new BigDecimal("800.00"), client, car);
     }
 
     @Test
     void createShouldReturnRentalWhenDataIsValid() {
         when(clientRepository.findById(clientId)).thenReturn(Optional.of(client));
         when(carRepository.findById(carId)).thenReturn(Optional.of(car));
-        when(repository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(repository.saveAndFlush(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         Rental result = service.create(rentalDTO);
 
         assertNotNull(result);
         assertEquals(CarStatus.RENTED, car.getStatus());
-        assertNotNull(result.getTotalValue());
         assertEquals(new BigDecimal("800.00"), result.getTotalValue());
     }
 
@@ -83,5 +89,29 @@ class RentalServiceTest {
         when(carRepository.findById(carId)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> service.create(rentalDTO));
+    }
+
+    @Test
+    void processReturnShouldUpdateCarStatusAndCalculateFineWhenLate() {
+        Instant realReturnDate = rental.getEndDate().plus(2, ChronoUnit.DAYS);
+        ReturnDTO returnDTO = new ReturnDTO(rentalId, realReturnDate);
+
+        when(repository.findById(rentalId)).thenReturn(Optional.of(rental));
+        when(repository.saveAndFlush(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Rental result = service.processReturn(returnDTO);
+
+        assertNotNull(result);
+        assertEquals(CarStatus.AVAILABLE, car.getStatus());
+        assertEquals(new BigDecimal("1200.00"), result.getTotalValue());
+        assertEquals(realReturnDate, result.getEndDate());
+    }
+
+    @Test
+    void processReturnShouldThrowResourceNotFoundExceptionWhenRentalIdDoesNotExist() {
+        ReturnDTO returnDTO = new ReturnDTO(UUID.randomUUID(), Instant.now());
+        when(repository.findById(any())).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> service.processReturn(returnDTO));
     }
 }

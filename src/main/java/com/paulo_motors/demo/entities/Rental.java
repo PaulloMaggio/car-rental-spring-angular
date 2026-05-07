@@ -23,6 +23,8 @@ public class Rental implements Serializable {
     @Column(nullable = false)
     private Instant endDate;
 
+    private BigDecimal priceAtRental;
+
     private BigDecimal totalValue;
 
     @ManyToOne
@@ -37,10 +39,11 @@ public class Rental implements Serializable {
 
     public Rental() {}
 
-    public Rental(UUID id, Instant startDate, Instant endDate, BigDecimal totalValue, Client client, Car car) {
+    public Rental(UUID id, Instant startDate, Instant endDate, BigDecimal priceAtRental, BigDecimal totalValue, Client client, Car car) {
         this.id = id;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.priceAtRental = priceAtRental;
         this.totalValue = totalValue;
         this.client = client;
         this.car = car;
@@ -52,6 +55,8 @@ public class Rental implements Serializable {
     public void setStartDate(Instant startDate) { this.startDate = startDate; }
     public Instant getEndDate() { return endDate; }
     public void setEndDate(Instant endDate) { this.endDate = endDate; }
+    public BigDecimal getPriceAtRental() { return priceAtRental; }
+    public void setPriceAtRental(BigDecimal priceAtRental) { this.priceAtRental = priceAtRental; }
     public BigDecimal getTotalValue() { return totalValue; }
     public void setTotalValue(BigDecimal totalValue) { this.totalValue = totalValue; }
     public Client getClient() { return client; }

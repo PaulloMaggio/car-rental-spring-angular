@@ -2,15 +2,17 @@ package com.paulo_motors.demo.controllers;
 
 import com.paulo_motors.demo.entities.Rental;
 import com.paulo_motors.demo.entitiesDTO.RentalDTO;
+import com.paulo_motors.demo.entitiesDTO.ReturnDTO;
 import com.paulo_motors.demo.services.RentalService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -28,13 +30,21 @@ public class RentalController {
         return ResponseEntity.created(uri).body(rental);
     }
 
+    @PutMapping(value = "/return")
+    public ResponseEntity<Rental> processReturn(@Valid @RequestBody ReturnDTO dto) {
+        Rental rental = service.processReturn(dto);
+        return ResponseEntity.ok().body(rental);
+    }
+
     @GetMapping
-    public ResponseEntity<List<Rental>> findAll() {
-        return ResponseEntity.ok().body(service.findAll());
+    public ResponseEntity<Page<Rental>> findAll(Pageable pageable) {
+        Page<Rental> list = service.findAll(pageable);
+        return ResponseEntity.ok().body(list);
     }
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<Rental> findById(@PathVariable UUID id) {
-        return ResponseEntity.ok().body(service.findById(id));
+        Rental rental = service.findById(id);
+        return ResponseEntity.ok().body(rental);
     }
 }
