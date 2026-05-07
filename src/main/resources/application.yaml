@@ -14,8 +14,14 @@ spring:
       hibernate:
         format_sql: true
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
   api-docs:
     path: /v3/api-docs
+
+api:
+  security:
+    token:
+      secret: ${JWT_SECRET:minha-chave-secreta-muito-segura-123}
