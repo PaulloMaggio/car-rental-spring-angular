@@ -62,5 +62,6 @@ public class CarService {
         car.setColor(dto.color());
         car.setMotor(dto.motor());
         car.setStatus(dto.status());
+        car.setPricePerDay(dto.pricePerDay());
     }
 }

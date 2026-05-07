@@ -1,9 +1,13 @@
 package com.paulo_motors.demo.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.paulo_motors.demo.entities.enums.CarStatus;
 import com.paulo_motors.demo.entities.enums.MotorType;
 import jakarta.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -33,15 +37,23 @@ public class Car implements Serializable {
     @Column(nullable = false)
     private CarStatus status;
 
+    @Column(nullable = false)
+    private BigDecimal pricePerDay;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "car")
+    private List<Rental> rentals = new ArrayList<>();
+
     public Car() {}
 
-    public Car(UUID id, String model, String brand, String color, MotorType motor, CarStatus status) {
+    public Car(UUID id, String model, String brand, String color, MotorType motor, CarStatus status, BigDecimal pricePerDay) {
         this.id = id;
         this.model = model;
         this.brand = brand;
         this.color = color;
         this.motor = motor;
         this.status = status;
+        this.pricePerDay = pricePerDay;
     }
 
     public UUID getId() { return id; }
@@ -56,6 +68,9 @@ public class Car implements Serializable {
     public void setMotor(MotorType motor) { this.motor = motor; }
     public CarStatus getStatus() { return status; }
     public void setStatus(CarStatus status) { this.status = status; }
+    public BigDecimal getPricePerDay() { return pricePerDay; }
+    public void setPricePerDay(BigDecimal pricePerDay) { this.pricePerDay = pricePerDay; }
+    public List<Rental> getRentals() { return rentals; }
 
     @Override
     public boolean equals(Object o) {

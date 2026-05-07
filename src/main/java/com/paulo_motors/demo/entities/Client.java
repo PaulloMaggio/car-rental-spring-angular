@@ -1,7 +1,10 @@
 package com.paulo_motors.demo.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -26,6 +29,10 @@ public class Client implements Serializable {
     @Column(nullable = false)
     private String phone;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "client")
+    private List<Rental> rentals = new ArrayList<>();
+
     public Client() {}
 
     public Client(UUID id, String name, String email, String cpf, String phone) {
@@ -46,6 +53,7 @@ public class Client implements Serializable {
     public void setCpf(String cpf) { this.cpf = cpf; }
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
+    public List<Rental> getRentals() { return rentals; }
 
     @Override
     public boolean equals(Object o) {

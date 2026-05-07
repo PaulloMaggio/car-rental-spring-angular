@@ -4,6 +4,8 @@ import com.paulo_motors.demo.entities.enums.CarStatus;
 import com.paulo_motors.demo.entities.enums.MotorType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import java.math.BigDecimal;
 
 public record CarDTO(
         @NotBlank(message = "Model is required")
@@ -19,5 +21,9 @@ public record CarDTO(
         MotorType motor,
 
         @NotNull(message = "Car status is required")
-        CarStatus status
+        CarStatus status,
+
+        @NotNull(message = "Price per day is required")
+        @Positive(message = "Price must be positive")
+        BigDecimal pricePerDay
 ) {}

@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -36,8 +37,8 @@ class CarServiceTest {
     @BeforeEach
     void setUp() {
         id = UUID.randomUUID();
-        car = new Car(id, "Onix", "Chevrolet", "Black", MotorType.MOTOR_1_0, CarStatus.AVAILABLE);
-        carDTO = new CarDTO("Onix", "Chevrolet", "Black", MotorType.MOTOR_1_0, CarStatus.AVAILABLE);
+        car = new Car(id, "Civic", "Honda", "Black", MotorType.MOTOR_2_0, CarStatus.AVAILABLE, new BigDecimal("200.00"));
+        carDTO = new CarDTO("Civic", "Honda", "Black", MotorType.MOTOR_2_0, CarStatus.AVAILABLE, new BigDecimal("200.00"));
     }
 
     @Test
@@ -59,7 +60,8 @@ class CarServiceTest {
         when(repository.save(any())).thenReturn(car);
         Car result = service.create(carDTO);
         assertNotNull(result);
-        assertEquals("Onix", result.getModel());
+        assertEquals("Civic", result.getModel());
+        assertEquals(new BigDecimal("200.00"), result.getPricePerDay());
     }
 
     @Test
