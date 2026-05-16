@@ -14,7 +14,6 @@ public class Client implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     @Column(nullable = false)
@@ -23,10 +22,10 @@ public class Client implements Serializable {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = true)
     private String cpf;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String phone;
 
     @JsonIgnore

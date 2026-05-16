@@ -37,8 +37,9 @@ class CarServiceTest {
     @BeforeEach
     void setUp() {
         id = UUID.randomUUID();
-        car = new Car(id, "Civic", "Honda", "Black", MotorType.MOTOR_2_0, CarStatus.AVAILABLE, new BigDecimal("200.00"));
-        carDTO = new CarDTO("Civic", "Honda", "Black", MotorType.MOTOR_2_0, CarStatus.AVAILABLE, new BigDecimal("200.00"));
+        String imageUrl = "https://res.cloudinary.com/demo/image/upload/car.jpg";
+        car = new Car(id, "Civic", "Honda", "Black", MotorType.MOTOR_2_0, CarStatus.AVAILABLE, new BigDecimal("200.00"), imageUrl);
+        carDTO = new CarDTO("Civic", "Honda", "Black", MotorType.MOTOR_2_0, CarStatus.AVAILABLE, new BigDecimal("200.00"), imageUrl);
     }
 
     @Test
@@ -56,12 +57,13 @@ class CarServiceTest {
     }
 
     @Test
-    void createShouldReturnCar() {
+    void createShouldReturnSavedCar() {
         when(repository.save(any())).thenReturn(car);
         Car result = service.create(carDTO);
         assertNotNull(result);
         assertEquals("Civic", result.getModel());
-        assertEquals(new BigDecimal("200.00"), result.getPricePerDay());
+        assertEquals(car.getImageUrl(), result.getImageUrl());
+        verify(repository, times(1)).save(any());
     }
 
     @Test

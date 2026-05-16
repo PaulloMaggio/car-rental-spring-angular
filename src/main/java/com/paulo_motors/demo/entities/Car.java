@@ -40,13 +40,16 @@ public class Car implements Serializable {
     @Column(nullable = false)
     private BigDecimal pricePerDay;
 
+    @Column(columnDefinition = "TEXT")
+    private String imageUrl;
+
     @JsonIgnore
     @OneToMany(mappedBy = "car")
     private List<Rental> rentals = new ArrayList<>();
 
     public Car() {}
 
-    public Car(UUID id, String model, String brand, String color, MotorType motor, CarStatus status, BigDecimal pricePerDay) {
+    public Car(UUID id, String model, String brand, String color, MotorType motor, CarStatus status, BigDecimal pricePerDay, String imageUrl) {
         this.id = id;
         this.model = model;
         this.brand = brand;
@@ -54,6 +57,7 @@ public class Car implements Serializable {
         this.motor = motor;
         this.status = status;
         this.pricePerDay = pricePerDay;
+        this.imageUrl = imageUrl;
     }
 
     public UUID getId() { return id; }
@@ -70,6 +74,8 @@ public class Car implements Serializable {
     public void setStatus(CarStatus status) { this.status = status; }
     public BigDecimal getPricePerDay() { return pricePerDay; }
     public void setPricePerDay(BigDecimal pricePerDay) { this.pricePerDay = pricePerDay; }
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
     public List<Rental> getRentals() { return rentals; }
 
     @Override

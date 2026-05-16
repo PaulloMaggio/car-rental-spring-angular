@@ -3,11 +3,10 @@ package com.paulo_motors.demo.services;
 import com.paulo_motors.demo.entities.Car;
 import com.paulo_motors.demo.entitiesDTO.CarDTO;
 import com.paulo_motors.demo.repositories.CarRepository;
-import com.paulo_motors.demo.services.exceptions.DatabaseException;
 import com.paulo_motors.demo.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -18,50 +17,49 @@ public class CarService {
     @Autowired
     private CarRepository repository;
 
-    public Car create(CarDTO dto) {
-        try {
-            Car car = new Car();
-            updateData(car, dto);
-            return repository.save(car);
-        } catch (DataIntegrityViolationException e) {
-            throw new DatabaseException(e.getMessage());
-        }
-    }
-
+    @Transactional(readOnly = true)
     public List<Car> findAll() {
         return repository.findAll();
     }
 
+    @Transactional(readOnly = true)
     public Car findById(UUID id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(id));
+        return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Entity not found"));
     }
 
+    @Transactional
+    public Car create(CarDTO dto) {
+        Car entity = new Car();
+        copyDtoToEntity(dto, entity);
+        return repository.save(entity);
+    }
+
+    @Transactional
     public Car update(UUID id, CarDTO dto) {
         try {
-            Car car = findById(id);
-            updateData(car, dto);
-            return repository.save(car);
-        } catch (DataIntegrityViolationException e) {
-            throw new DatabaseException(e.getMessage());
+            Car entity = repository.getReferenceById(id);
+            copyDtoToEntity(dto, entity);
+            return repository.saveAndFlush(entity);
+        } catch (jakarta.persistence.EntityNotFoundException e) {
+            throw new ResourceNotFoundException("Id not found " + id);
         }
     }
 
+    @Transactional
     public void delete(UUID id) {
-        try {
-            Car car = findById(id);
-            repository.delete(car);
-        } catch (DataIntegrityViolationException e) {
-            throw new DatabaseException("Integrity violation");
+        if (!repository.existsById(id)) {
+            throw new ResourceNotFoundException("Id not found " + id);
         }
+        repository.deleteById(id);
     }
 
-    private void updateData(Car car, CarDTO dto) {
-        car.setModel(dto.model());
-        car.setBrand(dto.brand());
-        car.setColor(dto.color());
-        car.setMotor(dto.motor());
-        car.setStatus(dto.status());
-        car.setPricePerDay(dto.pricePerDay());
+    private void copyDtoToEntity(CarDTO dto, Car entity) {
+        entity.setModel(dto.model());
+        entity.setBrand(dto.brand());
+        entity.setColor(dto.color());
+        entity.setMotor(dto.motor());
+        entity.setStatus(dto.status());
+        entity.setPricePerDay(dto.pricePerDay());
+        entity.setImageUrl(dto.imageUrl());
     }
 }

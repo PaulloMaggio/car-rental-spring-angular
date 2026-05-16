@@ -48,6 +48,8 @@ public class User implements UserDetails {
     @Override
     public String getUsername() { return login; }
 
+    public String getLogin() { return login; }
+
     @Override
     public boolean isAccountNonExpired() { return true; }
 
@@ -61,4 +63,6 @@ public class User implements UserDetails {
     public boolean isEnabled() { return true; }
 
     public UUID getId() { return id; }
+
+    public UserRole getRole() { return role; }
 }

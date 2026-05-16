@@ -58,7 +58,7 @@ class RentalServiceTest {
         rentalId = UUID.randomUUID();
 
         client = new Client(clientId, "Paulo", "paulo@test.com", "12345678901", "1699999999");
-        car = new Car(carId, "Civic", "Honda", "Black", MotorType.MOTOR_2_0, CarStatus.AVAILABLE, new BigDecimal("200.00"));
+        car = new Car(carId, "Civic", "Honda", "Black", MotorType.MOTOR_2_0, CarStatus.AVAILABLE, new BigDecimal("200.00"), null);
 
         rentalDTO = new RentalDTO(
                 Instant.now().plus(1, ChronoUnit.DAYS),
@@ -67,7 +67,7 @@ class RentalServiceTest {
                 carId
         );
 
-        rental = new Rental(rentalId, rentalDTO.startDate(), rentalDTO.endDate(), new BigDecimal("800.00"), client, car);
+        rental = new Rental(rentalId, rentalDTO.startDate(), rentalDTO.endDate(), new BigDecimal("200.00"), new BigDecimal("800.00"), client, car);
     }
 
     @Test

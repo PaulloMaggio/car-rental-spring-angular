@@ -1,11 +1,9 @@
 package com.paulo_motors.demo.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -16,25 +14,17 @@ public class Rental implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-
-    @Column(nullable = false)
     private Instant startDate;
-
-    @Column(nullable = false)
     private Instant endDate;
-
     private BigDecimal priceAtRental;
-
     private BigDecimal totalValue;
 
     @ManyToOne
     @JoinColumn(name = "client_id")
-    @JsonIgnoreProperties("rentals")
     private Client client;
 
     @ManyToOne
     @JoinColumn(name = "car_id")
-    @JsonIgnoreProperties("rentals")
     private Car car;
 
     public Rental() {}
@@ -63,17 +53,4 @@ public class Rental implements Serializable {
     public void setClient(Client client) { this.client = client; }
     public Car getCar() { return car; }
     public void setCar(Car car) { this.car = car; }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Rental rental = (Rental) o;
-        return Objects.equals(id, rental.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 }

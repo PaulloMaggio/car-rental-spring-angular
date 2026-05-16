@@ -1,38 +1,47 @@
 package com.paulo_motors.demo.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import com.paulo_motors.demo.entities.Rental;
+import com.paulo_motors.demo.entitiesDTO.RentalDTO;
+import com.paulo_motors.demo.services.RentalService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/rentals")
-@Tag(name = "Aluguéis")
+@CrossOrigin("*")
 public class RentalController {
 
-    @Operation(summary = "Listar aluguéis")
-    @GetMapping
-    public ResponseEntity findAll() {
-        return ResponseEntity.ok().build();
-    }
+    @Autowired
+    private RentalService service;
 
-    @Operation(summary = "Buscar aluguel por ID")
-    @GetMapping("/{id}")
-    public ResponseEntity findById(@PathVariable UUID id) {
-        return ResponseEntity.ok().build();
-    }
-
-    @Operation(summary = "Registrar novo aluguel")
     @PostMapping
-    public ResponseEntity save() {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Rental> save(@RequestBody @Valid RentalDTO dto) {
+        return ResponseEntity.ok(service.create(dto));
     }
 
-    @Operation(summary = "Realizar devolução de veículo")
-    @PutMapping("/return")
-    public ResponseEntity returnCar() {
-        return ResponseEntity.ok().build();
+    @GetMapping
+    public ResponseEntity<List<Rental>> findAll() {
+        return ResponseEntity.ok(service.findAll());
+    }
+
+    @GetMapping("/client/{clientId}")
+    public ResponseEntity<List<Rental>> findByClient(@PathVariable UUID clientId) {
+        return ResponseEntity.ok(service.findByClientId(clientId));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Rental> update(@PathVariable UUID id, @RequestBody @Valid RentalDTO dto) {
+        return ResponseEntity.ok(service.update(id, dto));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
