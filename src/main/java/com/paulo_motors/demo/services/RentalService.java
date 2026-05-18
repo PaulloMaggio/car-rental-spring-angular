@@ -13,9 +13,13 @@ import com.paulo_motors.demo.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.math.BigDecimal;
 import java.time.Duration;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
@@ -48,6 +52,8 @@ public class RentalService {
 
     @Transactional
     public Rental create(RentalDTO dto) {
+        System.out.println("📥 Iniciando criação de rental - Client: " + dto.clientId() + " | Car: " + dto.carId());
+
         Client client = clientRepository.findById(dto.clientId())
                 .orElseThrow(() -> new ResourceNotFoundException("Client not found"));
 
@@ -76,11 +82,38 @@ public class RentalService {
 
         Rental savedRental = repository.saveAndFlush(rental);
 
-        try {
-            emailService.sendRentalConfirmation(client.getEmail(), client.getName(), savedRental, car);
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-        }
+        System.out.println("✅ Rental salvo com ID: " + savedRental.getId());
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        String emailDestino = client.getEmail();
+        String nomeCliente = client.getName();
+        String detalhesCarro = car.getBrand() + " " + car.getModel();
+        String dataInicioStr = savedRental.getStartDate().atZone(ZoneId.systemDefault()).format(formatter);
+        String dataFimStr = savedRental.getEndDate().atZone(ZoneId.systemDefault()).format(formatter);
+        BigDecimal valorTotal = savedRental.getTotalValue();
+        String corCarro = car.getColor();
+        String motorCarro = car.getMotor() != null ? car.getMotor().name() : "";
+
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                try {
+                    emailService.sendRentalConfirmation(
+                            emailDestino,
+                            nomeCliente,
+                            detalhesCarro,
+                            dataInicioStr,
+                            dataFimStr,
+                            valorTotal,
+                            corCarro,
+                            motorCarro
+                    );
+                    System.out.println("📧 Email assíncrono disparado pós-commit para: " + emailDestino);
+                } catch (Exception e) {
+                    System.err.println("❌ Falha ao enviar email no fluxo assíncrono: " + e.getMessage());
+                }
+            }
+        });
 
         return savedRental;
     }

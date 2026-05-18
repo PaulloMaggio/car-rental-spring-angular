@@ -13,7 +13,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/rentals")
-@CrossOrigin("*")
 public class RentalController {
 
     @Autowired
